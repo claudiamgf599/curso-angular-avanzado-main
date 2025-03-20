@@ -52,7 +52,7 @@ export class CounterComponent
     console.log('message =>', this.message);
     this.counterRef = window.setInterval(() => {
       console.log('run interval');
-      this.counter.update((statePrev) => statePrev + 1);
+      this.counter.update(statePrev => statePrev + 1);
     }, 1000);
   }
 

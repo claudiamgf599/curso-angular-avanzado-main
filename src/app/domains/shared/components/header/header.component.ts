@@ -22,10 +22,10 @@ export class HeaderComponent {
   total = this.cartService.total;
 
   toogleSideMenu() {
-    this.hideSideMenu.update((prevState) => !prevState);
+    this.hideSideMenu.update(prevState => !prevState);
   }
 
   toggleMenu() {
-    this.showMenu.update((prevState) => !prevState);
+    this.showMenu.update(prevState => !prevState);
   }
 }

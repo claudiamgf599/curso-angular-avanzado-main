@@ -19,7 +19,7 @@ export default class ProductDetailComponent implements OnInit {
   ngOnInit() {
     if (this.id) {
       this.productService.getOne(this.id).subscribe({
-        next: (product) => {
+        next: product => {
           this.product.set(product);
           if (product.images.length > 0) {
             this.cover.set(product.images[0]);
