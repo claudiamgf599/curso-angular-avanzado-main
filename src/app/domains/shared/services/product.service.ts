@@ -20,9 +20,14 @@ export class ProductService {
     return this.http.get<Product[]>(url.toString());
   }
 
-  getOne(id: string) {
-    return this.http.get<Product>(
-      `${environment.apiUrl}/api/v1/products/${id}`
-    );
+  getOne(params: { product_slug?: string; product_id?: string }) {
+    const url = new URL(`${environment.apiUrl}/api/v1/products`);
+    if (params.product_slug) {
+      return this.http.get<Product>(`${url}/slug/${params.product_slug}`);
+    }
+    if (params.product_id) {
+      return this.http.get<Product>(`${url}/${params.product_id}`);
+    }
+    return this.http.get<Product>(url.toString());
   }
 }

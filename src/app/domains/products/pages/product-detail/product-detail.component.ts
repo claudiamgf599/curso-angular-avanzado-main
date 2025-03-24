@@ -10,22 +10,24 @@ import { CartService } from '@shared/services/cart.service';
   templateUrl: './product-detail.component.html',
 })
 export default class ProductDetailComponent implements OnInit {
-  @Input() id?: string;
+  @Input() product_slug?: string;
   product = signal<Product | null>(null);
   cover = signal('');
   private productService = inject(ProductService);
   private cartService = inject(CartService);
 
   ngOnInit() {
-    if (this.id) {
-      this.productService.getOne(this.id).subscribe({
-        next: product => {
-          this.product.set(product);
-          if (product.images.length > 0) {
-            this.cover.set(product.images[0]);
-          }
-        },
-      });
+    if (this.product_slug) {
+      this.productService
+        .getOne({ product_slug: this.product_slug })
+        .subscribe({
+          next: product => {
+            this.product.set(product);
+            if (product.images.length > 0) {
+              this.cover.set(product.images[0]);
+            }
+          },
+        });
     }
   }
 
