@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ProductService } from '@shared/services/product.service';
 import { Product } from '@shared/models/product.model';
@@ -10,16 +10,17 @@ import { CartService } from '@shared/services/cart.service';
   templateUrl: './product-detail.component.html',
 })
 export default class ProductDetailComponent implements OnInit {
-  @Input() product_slug?: string;
+  readonly product_slug = input<string>();
   product = signal<Product | null>(null);
   cover = signal('');
   private productService = inject(ProductService);
   private cartService = inject(CartService);
 
   ngOnInit() {
-    if (this.product_slug) {
+    const product_slug = this.product_slug();
+    if (product_slug) {
       this.productService
-        .getOne({ product_slug: this.product_slug })
+        .getOne({ product_slug: product_slug })
         .subscribe({
           next: product => {
             this.product.set(product);
