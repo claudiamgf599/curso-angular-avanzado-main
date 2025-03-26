@@ -4,7 +4,7 @@ import {
   signal,
   OnInit,
   OnChanges,
-  input
+  input,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLinkWithHref } from '@angular/router';

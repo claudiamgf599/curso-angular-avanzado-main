@@ -1,8 +1,15 @@
-import { Component, inject, signal, OnInit, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { ProductService } from '@shared/services/product.service';
+import {
+  Component,
+  OnInit,
+  inject,
+  input,
+  linkedSignal,
+  signal,
+} from '@angular/core';
 import { Product } from '@shared/models/product.model';
 import { CartService } from '@shared/services/cart.service';
+import { ProductService } from '@shared/services/product.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -11,33 +18,35 @@ import { CartService } from '@shared/services/cart.service';
 })
 export default class ProductDetailComponent implements OnInit {
   readonly product_slug = input<string>();
-  product = signal<Product | null>(null);
-  cover = signal('');
   private productService = inject(ProductService);
   private cartService = inject(CartService);
+
+  $product = signal<Product | null>(null);
+  $cover = linkedSignal(() => {
+    const product = this.$product(); // cover se recalcula cada vez que se haga un set a product. los computed no permiten set
+    if (product && product.images.length > 0) {
+      return product.images[0];
+    }
+    return '';
+  });
 
   ngOnInit() {
     const product_slug = this.product_slug();
     if (product_slug) {
-      this.productService
-        .getOne({ product_slug: product_slug })
-        .subscribe({
-          next: product => {
-            this.product.set(product);
-            if (product.images.length > 0) {
-              this.cover.set(product.images[0]);
-            }
-          },
-        });
+      this.productService.getOne({ product_slug: product_slug }).subscribe({
+        next: product => {
+          this.$product.set(product);
+        },
+      });
     }
   }
 
   changeCover(newImg: string) {
-    this.cover.set(newImg);
+    this.$cover.set(newImg);
   }
 
   addToCart() {
-    const product = this.product();
+    const product = this.$product();
     if (product) {
       this.cartService.addToCart(product);
     }
