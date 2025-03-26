@@ -7,6 +7,7 @@ import {
   OnDestroy,
   computed,
   input,
+  model,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -19,7 +20,7 @@ export class CounterComponent implements OnInit, AfterViewInit, OnDestroy {
   $duration = input.required<number>({ alias: 'duration' }); // con el alias el componente que lo llama lo puede llamar como duration, se debe deshabilitar la regla de eslint
   // doubleDuration = signal(0); // valor inicial, así sería para usar effect, pero pues no es necesario porque existe computed
   $doubleDuration = computed(() => this.$duration() * 2);
-  $message = input.required<string>({ alias: 'message' });
+  $message = model.required<string>({ alias: 'message' });
   $counter = signal(0);
   counterRef: number | undefined;
 
@@ -90,5 +91,9 @@ export class CounterComponent implements OnInit, AfterViewInit, OnDestroy {
   doSomething2() {
     console.log('change message');
     // async
+  }
+
+  setMessage() {
+    this.$message.set('Nuevo mensaje');
   }
 }
