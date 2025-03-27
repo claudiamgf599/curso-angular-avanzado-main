@@ -3,7 +3,7 @@ import { Component, OnChanges, inject, input, signal } from '@angular/core';
 import { RouterLinkWithHref } from '@angular/router';
 import { ProductComponent } from '@products/components/product/product.component';
 
-import { toSignal } from '@angular/core/rxjs-interop';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { Product } from '@shared/models/product.model';
 import { CartService } from '@shared/services/cart.service';
 import { CategoryService } from '@shared/services/category.service';
@@ -21,9 +21,17 @@ export default class ListComponent implements OnChanges {
   readonly slug = input<string>();
 
   $products = signal<Product[]>([]);
+  /* // a este sigal no se le puede hacer set
   $categories = toSignal(this.categoryService.getAll(), {
     initialValue: [],
-  }); // a este sigal no se le puede hacer set
+  });
+  */
+
+  // Al usar rxResource se puede hacer set a la señal y se tienen los estados de la petición, por lo que no se requiere crear variables adicionales
+  //   hace el parseo a signal
+  categoriesResource = rxResource({
+    loader: () => this.categoryService.getAll(),
+  });
 
   ngOnChanges() {
     this.getProducts();
@@ -42,5 +50,13 @@ export default class ListComponent implements OnChanges {
         console.log('Error fetching products');
       },
     });
+  }
+
+  resetCategories() {
+    this.categoriesResource.set([]);
+  }
+
+  reloadCategories() {
+    this.categoriesResource.reload();
   }
 }
