@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, resource } from '@angular/core';
 import { RouterLinkWithHref } from '@angular/router';
 import { ProductComponent } from '@products/components/product/product.component';
 
@@ -28,8 +28,15 @@ export default class ListComponent {
 
   // Al usar rxResource se puede hacer set a la señal y se tienen los estados de la petición, por lo que no se requiere crear variables adicionales
   //   hace el parseo a signal
+  /*
   categoriesResource = rxResource({
     loader: () => this.categoryService.getAll(),
+  });  
+  */
+
+  // Se puede cambiar el rxResource por resource para recuperar la información como Promise
+  categoriesResource = resource({
+    loader: () => this.categoryService.getAllPromise(),
   });
 
   productsResource = rxResource({
