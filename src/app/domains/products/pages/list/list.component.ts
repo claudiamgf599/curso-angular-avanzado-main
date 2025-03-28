@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnChanges, inject, input, signal } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { RouterLinkWithHref } from '@angular/router';
 import { ProductComponent } from '@products/components/product/product.component';
 
@@ -14,13 +14,12 @@ import { ProductService } from '@shared/services/product.service';
   imports: [CommonModule, ProductComponent, RouterLinkWithHref],
   templateUrl: './list.component.html',
 })
-export default class ListComponent implements OnChanges {
+export default class ListComponent {
   private cartService = inject(CartService);
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
   readonly slug = input<string>();
 
-  $products = signal<Product[]>([]);
   /* // a este sigal no se le puede hacer set
   $categories = toSignal(this.categoryService.getAll(), {
     initialValue: [],
@@ -33,23 +32,20 @@ export default class ListComponent implements OnChanges {
     loader: () => this.categoryService.getAll(),
   });
 
-  ngOnChanges() {
-    this.getProducts();
-  }
+  productsResource = rxResource({
+    /* // esta es una forma de hacerlo, aunque lleva más código porque no es javascript moderno
+      request: () => {
+        return {
+          category_slug: this.slug(), //  cada vez que cambia el slug se hace la petición, y se envía al request como category_slug
+        };
+      }
+      */
+    request: () => ({ category_slug: this.slug() }), // se podrían añadir más parámetros, por ejemplo, si se quiere hacer un search, se podría añadir un parámetro search
+    loader: ({ request }) => this.productService.getProducts(request),
+  });
 
   addToCart(product: Product) {
     this.cartService.addToCart(product);
-  }
-
-  private getProducts() {
-    this.productService.getProducts({ category_slug: this.slug() }).subscribe({
-      next: products => {
-        this.$products.set(products);
-      },
-      error: () => {
-        console.log('Error fetching products');
-      },
-    });
   }
 
   resetCategories() {
@@ -58,5 +54,9 @@ export default class ListComponent implements OnChanges {
 
   reloadCategories() {
     this.categoriesResource.reload();
+  }
+
+  reloadProducts() {
+    this.productsResource.reload();
   }
 }
