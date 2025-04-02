@@ -8,6 +8,7 @@ import {
   computed,
   input,
   model,
+  afterNextRender,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -22,7 +23,7 @@ export class CounterComponent implements OnInit, AfterViewInit, OnDestroy {
   $doubleDuration = computed(() => this.$duration() * 2);
   $message = model.required<string>({ alias: 'message' });
   $counter = signal(0);
-  counterRef: number | undefined;
+  counterRef: number | null = null; // mejor práctica es inicializar en null
 
   constructor() {
     // NO ASYNC
@@ -42,6 +43,14 @@ export class CounterComponent implements OnInit, AfterViewInit, OnDestroy {
       this.$message();
       this.doSomething2();
     });
+
+    afterNextRender(() => {
+      // es como el ngOnInit para el client
+      this.counterRef = window.setInterval(() => {
+        console.log('run interval');
+        this.$counter.update(statePrev => statePrev + 1);
+      }, 1000);
+    });
   }
 
   /* // ya no se requiere en Angular 19
@@ -57,6 +66,7 @@ export class CounterComponent implements OnInit, AfterViewInit, OnDestroy {
   }*/
 
   ngOnInit() {
+    // se ejecuta para el server y para el client
     // after render
     // una vez
     // async, then, subs
@@ -64,10 +74,6 @@ export class CounterComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log('-'.repeat(10));
     console.log('duration =>', this.$duration);
     console.log('message =>', this.$message);
-    this.counterRef = window.setInterval(() => {
-      console.log('run interval');
-      this.$counter.update(statePrev => statePrev + 1);
-    }, 1000);
   }
 
   ngAfterViewInit() {
@@ -80,7 +86,9 @@ export class CounterComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     console.log('ngOnDestroy');
     console.log('-'.repeat(10));
-    window.clearInterval(this.counterRef);
+    if (this.counterRef) {
+      window.clearInterval(this.counterRef);
+    }
   }
 
   doSomething() {
