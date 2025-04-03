@@ -1,5 +1,5 @@
 <!-- antes se usaba el signal product para recorrer el for y para mostrar propiedades, es mejor usar la variable local porque el signal se lee cada vez que se llama   -->
-@let data = $product();
+@let data = productRs.value();
 @let cover = $cover();
 
 @if (data && cover) {
