@@ -30,4 +30,11 @@ export class ProductService {
     }
     return this.http.get<Product>(url.toString());
   }
+
+  getRelatedProducts(slug: string) {
+    const url = new URL(
+      `${environment.apiUrl}/api/v1/products/slug/${slug}/related`
+    );
+    return this.http.get<Product>(url.toString());
+  }
 }

@@ -2,13 +2,14 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, effect, inject, input, linkedSignal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { environment } from '@env/environment';
+import { RelatedComponent } from '@products/components/related/related.component';
 import { CartService } from '@shared/services/cart.service';
 import { MetaTagsService } from '@shared/services/meta-tags.service';
 import { ProductService } from '@shared/services/product.service';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [CommonModule, NgOptimizedImage, RelatedComponent],
   templateUrl: './product-detail.component.html',
 })
 export default class ProductDetailComponent {
