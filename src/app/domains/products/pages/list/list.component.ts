@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, resource } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  resource,
+} from '@angular/core';
 import { RouterLinkWithHref } from '@angular/router';
 import { ProductComponent } from '@products/components/product/product.component';
 
@@ -13,6 +19,7 @@ import { ProductService } from '@shared/services/product.service';
   selector: 'app-list',
   imports: [CommonModule, ProductComponent, RouterLinkWithHref],
   templateUrl: './list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ListComponent {
   private cartService = inject(CartService);
